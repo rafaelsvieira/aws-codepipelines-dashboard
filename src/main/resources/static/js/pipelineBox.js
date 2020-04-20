@@ -34,11 +34,28 @@ Vue.component("ThePageHeader", {
  */
 const ThePipelineGrid = Vue.component("ThePipelineGrid", {
   props: ["pipelines"],
+  data: function () {
+    return {
+        origPipelines: this.pipelines,
+        searchPipeline: '',
+    }
+  },
   template: `
+    <a>
+    <p>
+        <input class="form-control w-25" placeholder="Filter By Name" v-model="searchPipeline" type="search">
+    </p>
     <div class="card-deck">
         <pipeline v-for="pipeline in pipelines" v-bind:pipeline="pipeline" :key="pipeline.name"/>
     </div>
-  `
+  `,
+  watch: {
+    searchPipeline: function (newSearch, oldSearch) {
+        this.pipelines = this.origPipelines.filter( pipeline => {
+            return pipeline.name.toLowerCase().includes(newSearch.toLowerCase())
+        })
+      }
+  },
 });
 
 /**
@@ -354,7 +371,7 @@ function fetchAllPipelines() {
           // return Math.random() - Math.random();
           return b.lastStatusChange - a.lastStatusChange;
         });
-        
+
         // Replace the contents of app.pipelines with these new (sorted) pipelines.
         app.pipelines.splice(0, app.pipelines.length, ...pipelines);
       });
