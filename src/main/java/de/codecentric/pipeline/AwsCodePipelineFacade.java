@@ -1,5 +1,8 @@
 package de.codecentric.pipeline;
 
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import com.amazonaws.services.codepipeline.AWSCodePipeline;
 import com.amazonaws.services.codepipeline.model.*;
 import org.springframework.stereotype.Component;
@@ -7,13 +10,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class AwsCodePipelineFacade {
     private final AWSCodePipeline client;
+    private final String group;
 
     public AwsCodePipelineFacade (AWSCodePipeline awsCodePipeline) {
         this.client = awsCodePipeline;
+        this.group = System.getenv("DASHBOARD_GROUP");
     }
 
     public ListPipelinesResult getPipelineResults() {
-        return client.listPipelines(new ListPipelinesRequest());
+        ListPipelinesResult result = client.listPipelines(new ListPipelinesRequest());
+        Predicate<PipelineSummary> filter = pipeline -> pipeline.getName().startsWith(group);
+
+        result.setPipelines(result.getPipelines().stream().filter(filter)
+        .collect(Collectors.toList()));
+
+        return result;
     }
 
     public GetPipelineStateResult getPipelineStatus(String pipelineName) {
