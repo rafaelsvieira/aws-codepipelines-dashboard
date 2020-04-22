@@ -9,3 +9,7 @@ target
 
 ### Local data files ###
 /src/main/resources/data/
+.classpath
+.factorypath
+.project
+.settings
