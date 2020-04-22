@@ -177,7 +177,7 @@ Vue.component("PipelineStage", {
           <div class="pl-2 pr-2 small rounded border border-secondary" v-bind:class="showRevision">{{ revisionId }}</div>
           <div class="p-1">
               <span v-bind:class="badgeType">
-                  <a class="text-light" v-bind:href="this.stage.externalExecutionUrl">{{ latestExecutionDate }}</a>
+                  <a class="text-light" v-bind:href="this.stage.externalExecutionUrl" target="_blank">{{ latestExecutionDate }}</a>
               </span>
           </div>
       </div>
