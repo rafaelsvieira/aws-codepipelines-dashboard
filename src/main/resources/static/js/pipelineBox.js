@@ -51,10 +51,20 @@ const ThePipelineGrid = Vue.component("ThePipelineGrid", {
   `,
   watch: {
     searchPipeline: function (newSearch, oldSearch) {
+      const filters = newSearch.split(",");
+      if (filters.length > 0) {
         this.pipelines = this.origPipelines.filter( pipeline => {
-            return pipeline.name.toLowerCase().includes(newSearch.toLowerCase())
+          for(let i = 0; i < filters.length; i++) {
+            if (!pipeline.name.toLowerCase().includes(filters[i].toLowerCase())){
+              return false;
+            }
+          }
+          return true;
         })
+      } else {
+        this.pipelines = this.origPipelines;
       }
+    }
   },
 });
 
