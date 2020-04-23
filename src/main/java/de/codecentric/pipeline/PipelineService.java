@@ -22,8 +22,8 @@ public class PipelineService {
         this.awsCodePipelineFacade = awsCodePipelineFacade;
     }
 
-    public List<PipelineSummary> getPipelines() {
-        return awsCodePipelineFacade.getPipelineResults().getPipelines();
+    public List<PipelineSummary> getPipelines(String group) {
+        return awsCodePipelineFacade.getPipelineResults(group).getPipelines();
     }
 
     public PipelineDetailsResult getPipelineDetails(String pipelineName) throws PipelineServiceException {

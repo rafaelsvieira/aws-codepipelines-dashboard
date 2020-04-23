@@ -147,6 +147,10 @@
   .sk-fading-circle .sk-circle12:before {
     -webkit-animation-delay: -0.1s;
             animation-delay: -0.1s; }
+  .error-message {
+    color: white;
+    text-align: center;
+  }
 
 @-webkit-keyframes sk-circleFadeDelay {
   0%, 39%, 100% {
@@ -197,6 +201,12 @@
             <div class="sk-circle10 sk-circle"></div>
             <div class="sk-circle11 sk-circle"></div>
             <div class="sk-circle12 sk-circle"></div>
+        </div>
+
+        <div v-show="error.enable" class="error-message">
+          <h2>STATUS: {{error.status}}</h2>
+          <h2>ERROR: {{error.message}}</h2>
+          <h2>PATH: {{error.path}}</h2>
         </div>
 
         <div v-show="!loading" class="container-fluid">

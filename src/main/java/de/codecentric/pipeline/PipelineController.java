@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -17,9 +18,10 @@ public class PipelineController {
         this.pipelineService = pipelineService;
     }
 
-    @RequestMapping("/pipelines")
-    public List<PipelineSummary> handleIndex() {
-        return pipelineService.getPipelines();
+    @RequestMapping(value = {"/pipelines", "/pipelines/{group}"})
+    public List<PipelineSummary> handleIndex(@PathVariable Optional<String>  group) {
+        String filter = group.isPresent() ? group.get() : "";
+        return pipelineService.getPipelines(filter);
     }
 
     @RequestMapping("/pipeline/{name}")

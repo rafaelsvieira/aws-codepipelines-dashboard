@@ -3,8 +3,9 @@ let PipelineService = function (jquery, as) {
     // If no AjaxSequencer was passed in, use the jQuery instance directly.
     as = as || jquery;
 
-    function getPipelines() {
-        return as.get('/pipelines').then((response) => response.map((elem) => elem.name));
+    function getPipelines(param) {
+        param = param ? param : "";
+        return as.get('/pipelines' + param).then((response) => response.map((elem) => elem.name));
     }
 
     function parsePipelineActionState(actionState) {

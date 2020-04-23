@@ -287,7 +287,8 @@ let cardPipelines = [];
 // We'll talk about nested routes later.
 const routes = [
   { path: '/', component: ThePipelineGrid, props: { pipelines: gridPipelines } },
-  { path: '/card/:pipelineName', component: PipelineCard, props: { cardlines: cardPipelines } }
+  { path: '/card/:pipelineName', component: PipelineCard, props: { cardlines: cardPipelines } },
+  { path: '/:app', component: ThePipelineGrid, props: { pipelines: gridPipelines } },
 ];
 
 // 3. Create the router instance and pass the `routes` option
@@ -314,6 +315,10 @@ router.afterEach((to, from) => {
   // Show the loading indicator (even if just briefly).
   app.loading = true;
 
+  if (app?.error?.enable) {
+    app.error.enable = false;
+  }
+
   let refreshFunc = window.location.reload;
   let refreshArgs = null;
 
@@ -324,6 +329,9 @@ router.afterEach((to, from) => {
     fetchCardPipeline(to.params.pipelineName);
     refreshFunc = fetchCardPipeline;
     refreshArgs = to.params.pipelineName;
+  } else {
+    fetchAllPipelines(to.path);
+    refreshFunc = fetchAllPipelines;
   }
 
   if (refreshInterval) {
@@ -339,9 +347,19 @@ function fetchCardPipeline(pipelineName) {
     .always(() => app.loading = false);
 }
 
-function fetchAllPipelines() {
+function fetchAllPipelines(param = null) {
   // Navigating to the initial path. Fetch all pipeline data.
-  pipelineService.getPipelines().done((names) => {
+  pipelineService.getPipelines(param).done((names) => {
+    if (names.length === 0) {
+      app.loading = false;
+      app.error = {
+        status: 404,
+        message: "Not found",
+        path: param,
+        enable: true,
+      }
+      return;
+    }
     // Find all current app.pipeline elements that have names in the returned (names) array,
     // and use this list as the initial set of pipeline objects to display.
     // Filter out (undefined) elements. Happens when app.pipelines doesn't have an entry for (name). Initial condition.
@@ -376,6 +394,9 @@ function fetchAllPipelines() {
         app.pipelines.splice(0, app.pipelines.length, ...pipelines);
       });
     }
+  }).catch(error => {
+    app.loading = false;
+    app.error = {enable :true, ...error.responseJSON}
   });
 }
 
@@ -386,7 +407,8 @@ app = new Vue({
   data: {
     pipelines: gridPipelines,
     cardlines: cardPipelines,
-    loading: true
+    loading: true,
+    error:{},
   },
   methods: {}
 });

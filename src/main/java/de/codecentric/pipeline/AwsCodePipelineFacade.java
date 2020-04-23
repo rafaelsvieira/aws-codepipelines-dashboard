@@ -10,16 +10,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class AwsCodePipelineFacade {
     private final AWSCodePipeline client;
-    private final String group;
 
     public AwsCodePipelineFacade (AWSCodePipeline awsCodePipeline) {
         this.client = awsCodePipeline;
-        this.group = System.getenv("DASHBOARD_GROUP");
     }
 
-    public ListPipelinesResult getPipelineResults() {
+    public ListPipelinesResult getPipelineResults(String group) {
         ListPipelinesResult result = client.listPipelines(new ListPipelinesRequest());
-        Predicate<PipelineSummary> filter = pipeline -> pipeline.getName().startsWith(group);
+        Predicate<PipelineSummary> filter = pipeline -> pipeline.getName().contains(group);
 
         result.setPipelines(result.getPipelines().stream().filter(filter)
         .collect(Collectors.toList()));
