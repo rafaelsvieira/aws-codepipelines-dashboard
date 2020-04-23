@@ -29,17 +29,17 @@ public class PipelineServiceGetPipelinesTest {
 
     @Test
     public void getPipelines_uses_fixed_PipelinesRequest() {
-        when(awsCodePipelineFacade.getPipelineResults()).thenReturn(listPipelinesResult);
-        pipelineService.getPipelines();
-        verify(awsCodePipelineFacade).getPipelineResults();
+        when(awsCodePipelineFacade.getPipelineResults("")).thenReturn(listPipelinesResult);
+        pipelineService.getPipelines("");
+        verify(awsCodePipelineFacade).getPipelineResults("");
     }
 
     @Test
     public void getPipelines_returns_expected_list_of_PipelineSummaries() {
         List<PipelineSummary> summaries = Collections.singletonList(new PipelineSummary());
-        when(awsCodePipelineFacade.getPipelineResults()).thenReturn(listPipelinesResult);
+        when(awsCodePipelineFacade.getPipelineResults("")).thenReturn(listPipelinesResult);
         when(listPipelinesResult.getPipelines()).thenReturn(summaries);
-        List<PipelineSummary> actualResult = pipelineService.getPipelines();
+        List<PipelineSummary> actualResult = pipelineService.getPipelines("");
         assertEquals(summaries, actualResult);
     }
 
