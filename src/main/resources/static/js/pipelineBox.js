@@ -325,7 +325,7 @@ router.afterEach((to, from) => {
   // Show the loading indicator (even if just briefly).
   app.loading = true;
 
-  if (app?.error?.enable) {
+  if (app && app.error && app.error.enable) {
     app.error.enable = false;
   }
 
