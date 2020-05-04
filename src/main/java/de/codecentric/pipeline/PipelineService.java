@@ -1,45 +1,47 @@
 package de.codecentric.pipeline;
 
-import com.amazonaws.services.codepipeline.model.AWSCodePipelineException;
-import com.amazonaws.services.codepipeline.model.GetPipelineStateResult;
-import com.amazonaws.services.codepipeline.model.PipelineSummary;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import com.amazonaws.services.codepipeline.model.AWSCodePipelineException;
+import com.amazonaws.services.codepipeline.model.GetPipelineStateResult;
+import com.amazonaws.services.codepipeline.model.PipelineSummary;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class PipelineService {
 
-    private final AwsCodePipelineFacade awsCodePipelineFacade;
+	private final AwsCodePipelineFacade awsCodePipelineFacade;
 
-    private Map<String, PipelineDetailsResult> latestResult = new HashMap<>();
+	private Map<String, PipelineDetailsResult> latestResult = new HashMap<>();
 
-    public PipelineService(AwsCodePipelineFacade awsCodePipelineFacade) {
-        this.awsCodePipelineFacade = awsCodePipelineFacade;
-    }
+	public PipelineService(AwsCodePipelineFacade awsCodePipelineFacade) {
+		this.awsCodePipelineFacade = awsCodePipelineFacade;
+	}
 
-    public List<PipelineSummary> getPipelines(String group) {
-        return awsCodePipelineFacade.getPipelineResults(group).getPipelines();
-    }
+	public List<PipelineSummary> getPipelines(String group) {
+		return awsCodePipelineFacade.getPipelineResults(group).getPipelines();
+	}
 
-    public PipelineDetailsResult getPipelineDetails(String pipelineName) throws PipelineServiceException {
-        try {
-            GetPipelineStateResult result = awsCodePipelineFacade.getPipelineStatus(pipelineName);
-            String commitMessage = awsCodePipelineFacade.getLatestCommitMessage(pipelineName);
-            PipelineDetailsResult pipelineDetailsResult = new PipelineDetailsResult(result.getStageStates(), commitMessage);
-            latestResult.put(pipelineName, pipelineDetailsResult);
-            return pipelineDetailsResult;
-        } catch (AWSCodePipelineException e) {
-            if (latestResult.containsKey(pipelineName)) {
-                log.warn("{} - Returning cached value for {}", e.getMessage(), pipelineName);
-                return latestResult.get(pipelineName);
-            }
-            throw new PipelineServiceException("Failed to get details for " + pipelineName, e);
-        }
-    }
+	public PipelineDetailsResult getPipelineDetails(String pipelineName) throws PipelineServiceException {
+		try {
+			GetPipelineStateResult result = awsCodePipelineFacade.getPipelineStatus(pipelineName);
+			String commitMessage = awsCodePipelineFacade.getLatestCommitMessage(pipelineName);
+			PipelineDetailsResult pipelineDetailsResult = new PipelineDetailsResult(result.getStageStates(), commitMessage);
+			latestResult.put(pipelineName, pipelineDetailsResult);
+			return pipelineDetailsResult;
+		} catch (AWSCodePipelineException e) {
+			if (latestResult.containsKey(pipelineName)) {
+				log.warn("{} - Returning cached value for {}", e.getMessage(), pipelineName);
+				return latestResult.get(pipelineName);
+			}
+			throw new PipelineServiceException("Failed to get details for " + pipelineName, e);
+		}
+	}
 
 }
