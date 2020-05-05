@@ -333,15 +333,12 @@ router.afterEach((to, from) => {
   let refreshArgs = null;
 
   if (to.path === '/') {
-    fetchAllPipelines();
+    fetchAllPipelines(to.query);
     refreshFunc = fetchAllPipelines;
   } else if (to.path.match('^/card/')) {
     fetchCardPipeline(to.params.pipelineName);
     refreshFunc = fetchCardPipeline;
     refreshArgs = to.params.pipelineName;
-  } else {
-    fetchAllPipelines(to.path);
-    refreshFunc = fetchAllPipelines;
   }
 
   if (refreshInterval) {
@@ -357,7 +354,7 @@ function fetchCardPipeline(pipelineName) {
     .always(() => app.loading = false);
 }
 
-function fetchAllPipelines(param = null) {
+function fetchAllPipelines(param = {}) {
   // Navigating to the initial path. Fetch all pipeline data.
   pipelineService.getPipelines(param).done((names) => {
     if (names.length === 0) {
@@ -378,7 +375,7 @@ function fetchAllPipelines(param = null) {
 
     for (let i = 0; i < names.length; i++) {
       // Fetch each pipeline.
-      pipelineService.getPipelineDetails(names[i]).done((pipeline) => {
+      pipelineService.getPipelineDetails(names[i], param).done((pipeline) => {
         // We've got something to display, so stop the loading indicator. Doesn't matter if this is set to false many times.
         app.loading = false;
 

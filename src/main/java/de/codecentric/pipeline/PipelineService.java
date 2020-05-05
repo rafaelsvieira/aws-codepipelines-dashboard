@@ -28,9 +28,12 @@ public class PipelineService {
 		return awsCodePipelineFacade.getPipelineResults(group).getPipelines();
 	}
 
-	public PipelineDetailsResult getPipelineDetails(String pipelineName) throws PipelineServiceException {
+	public PipelineDetailsResult getPipelineDetails(String pipelineName, String pipelineStatus) throws PipelineServiceException {
 		try {
-			GetPipelineStateResult result = awsCodePipelineFacade.getPipelineStatus(pipelineName);
+			GetPipelineStateResult result = awsCodePipelineFacade.getPipelineStatus(pipelineName, pipelineStatus);
+			if (result == null) {
+				throw new PipelineServiceException("Failed to get details for " + pipelineName + " with status " + pipelineStatus, null);
+			}
 			String commitMessage = awsCodePipelineFacade.getLatestCommitMessage(pipelineName);
 			PipelineDetailsResult pipelineDetailsResult = new PipelineDetailsResult(result.getStageStates(), commitMessage);
 			latestResult.put(pipelineName, pipelineDetailsResult);

@@ -48,8 +48,16 @@ public class AwsCodePipelineFacade {
 		return result;
 	}
 
-	public GetPipelineStateResult getPipelineStatus(String pipelineName) {
-		return client.getPipelineState(new GetPipelineStateRequest().withName(pipelineName));
+	public GetPipelineStateResult getPipelineStatus(String pipelineName, String pipelineStatus) {
+		GetPipelineStateResult result = client.getPipelineState(new GetPipelineStateRequest().withName(pipelineName));
+		String status = result.getStageStates().get(0).getLatestExecution().getStatus().toLowerCase();
+		if (pipelineStatus.equalsIgnoreCase("all")) {
+			return result;
+		} else if(result.getStageStates().get(0).getLatestExecution().getStatus().toLowerCase() == pipelineStatus) {
+			return result;
+		} else {
+			return null;
+		}
 	}
 
 	public String getLatestCommitMessage(String pipelineName) {

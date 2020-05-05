@@ -3,9 +3,23 @@ let PipelineService = function (jquery, as) {
     // If no AjaxSequencer was passed in, use the jQuery instance directly.
     as = as || jquery;
 
+	function buildQuery(param) {
+	    let paramQuery = "?";
+
+		for (let [key, value] of Object.entries(param)) {
+          if (paramQuery == "?") {
+            paramQuery += `${key}=${value}`
+          } else {
+	        paramQuery += `&${key}=${value}`
+          }
+		}
+
+		return paramQuery;
+	}
+
     function getPipelines(param) {
-        param = param ? param : "";
-        return as.get('/pipelines' + param).then((response) => response.map((elem) => elem.name));
+		let paramQuery = buildQuery(param);
+        return as.get('/pipelines' + paramQuery).then((response) => response.map((elem) => elem.name));
     }
 
     function parsePipelineActionState(actionState) {
@@ -23,9 +37,10 @@ let PipelineService = function (jquery, as) {
         };
     }
 
-    function getPipelineDetails(pipelineName) {
-        let stages = [];
-        return as.get("/pipeline/" + pipelineName).then(function(response) {
+    function getPipelineDetails(pipelineName, param = {"status": "all"}) {
+	    let paramQuery = buildQuery(param);
+
+        return as.get("/pipeline/" + pipelineName + paramQuery).then(function(response) {
             let pipelineDetails = {
                 name: pipelineName,
                 commitMessage: response.commitMessage,
