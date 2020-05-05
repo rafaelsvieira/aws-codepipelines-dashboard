@@ -37,7 +37,8 @@ public class PipelineService {
 			return pipelineDetailsResult;
 		} catch (AWSCodePipelineException e) {
 			if (latestResult.containsKey(pipelineName)) {
-				log.warn("{} - Returning cached value for {}", e.getMessage(), pipelineName);
+				System.out.println(e.getMessage() + " - Returning cached value for " + pipelineName);
+				//log.warn("{} - Returning cached value for {}", e.getMessage(), pipelineName);
 				return latestResult.get(pipelineName);
 			}
 			throw new PipelineServiceException("Failed to get details for " + pipelineName, e);

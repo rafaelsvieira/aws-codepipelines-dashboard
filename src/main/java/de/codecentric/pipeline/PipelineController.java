@@ -32,7 +32,8 @@ public class PipelineController {
 		try {
 			return pipelineService.getPipelineDetails(name);
 		} catch (PipelineServiceException e) {
-			log.warn("Failed to get pipeline details for {}. Will return null response.", name, e);
+			System.out.println("Failed to get pipeline details for " + name + ". Will return null response." + e);
+			//log.warn("Failed to get pipeline details for {}. Will return null response.", name, e);
 			return null;
 		}
 	}
