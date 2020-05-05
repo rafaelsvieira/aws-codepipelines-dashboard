@@ -1,11 +1,13 @@
 package de.codecentric.pipeline;
 
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.codepipeline.AWSCodePipeline;
+import com.amazonaws.services.codepipeline.model.ArtifactRevision;
 import com.amazonaws.services.codepipeline.model.GetPipelineExecutionRequest;
 import com.amazonaws.services.codepipeline.model.GetPipelineExecutionResult;
 import com.amazonaws.services.codepipeline.model.GetPipelineRequest;
@@ -78,10 +80,11 @@ public class AwsCodePipelineFacade {
 	}
 
 	private String getLatestRevisionSummary(GetPipelineExecutionResult pipelineExecution) {
-		return pipelineExecution.getPipelineExecution()
-				.getArtifactRevisions()
-				.get(0)
-				.getRevisionSummary();
+		List<ArtifactRevision> listRevision = pipelineExecution.getPipelineExecution().getArtifactRevisions();
+		if (listRevision.isEmpty())
+			return "";
+		else
+			return listRevision.get(0).getRevisionSummary();
 	}
 
 	private GetPipelineExecutionResult getPipelineExecutionSummary(String name, String latestPipelineExecutionId) {
