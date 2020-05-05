@@ -50,10 +50,16 @@ public class AwsCodePipelineFacade {
 
 	public GetPipelineStateResult getPipelineStatus(String pipelineName, String pipelineStatus) {
 		GetPipelineStateResult result = client.getPipelineState(new GetPipelineStateRequest().withName(pipelineName));
-		String status = result.getStageStates().get(0).getLatestExecution().getStatus().toLowerCase();
+		String status;
+
+		if(result.getStageStates().isEmpty())
+			status = "unknow";
+		else
+			status = result.getStageStates().get(0).getLatestExecution().getStatus().toLowerCase();
+
 		if (pipelineStatus.equalsIgnoreCase("all")) {
 			return result;
-		} else if(result.getStageStates().get(0).getLatestExecution().getStatus().equalsIgnoreCase(pipelineStatus)) {
+		} else if(status.equalsIgnoreCase(pipelineStatus)) {
 			return result;
 		} else {
 			return null;
