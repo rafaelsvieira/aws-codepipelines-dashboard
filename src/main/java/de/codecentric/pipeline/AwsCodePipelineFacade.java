@@ -27,7 +27,7 @@ public class AwsCodePipelineFacade {
 	public AwsCodePipelineFacade (AWSCodePipeline awsCodePipeline) {
 		this.client = awsCodePipeline;
 		this.tagFilter = new Tag();
-		String key =  System.getenv("AWS_TAG_FILTER") != null ? System.getenv("AWS_TAG_FILTER") : "canais";
+		String key =  System.getenv("AWS_TAG_FILTER") != null ? System.getenv("AWS_TAG_FILTER") : "canal";
 		tagFilter.setKey(key);
 	}
 
@@ -53,7 +53,7 @@ public class AwsCodePipelineFacade {
 		String status = result.getStageStates().get(0).getLatestExecution().getStatus().toLowerCase();
 		if (pipelineStatus.equalsIgnoreCase("all")) {
 			return result;
-		} else if(result.getStageStates().get(0).getLatestExecution().getStatus().toLowerCase() == pipelineStatus) {
+		} else if(result.getStageStates().get(0).getLatestExecution().getStatus().equalsIgnoreCase(pipelineStatus)) {
 			return result;
 		} else {
 			return null;
