@@ -14,12 +14,13 @@ let PipelineService = function (jquery, as) {
           }
 		}
 
-		return paramQuery;
+		return paramQuery == '?' ? '' : paramQuery;
 	}
 
     function getPipelines(param) {
-		let paramQuery = buildQuery(param);
-        return as.get('/pipelines' + paramQuery).then((response) => response.map((elem) => elem.name));
+		let paramQuery = buildQuery(param.query);
+		let paramPath = param.path ? param.path : "";
+        return as.get('/pipelines' + paramPath + paramQuery).then((response) => response.map((elem) => elem.name));
     }
 
     function parsePipelineActionState(actionState) {

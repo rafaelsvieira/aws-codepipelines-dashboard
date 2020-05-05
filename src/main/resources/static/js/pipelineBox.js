@@ -9,23 +9,31 @@ Vue.component("ThePageHeader", {
   template: `
             <nav class="navbar navbar-light bg-light mb-4 mt-4">
                 <a class="navbar-brand mr-auto" href="#">Dashboard</a>
-
-                <span class="navbar-text mr-2">
-                    <span class="badge badge-success">succeeded</span>
+				<span class="navbar-text mr-2">
+                    <span class="badge badge-dark"><a href="#" v-on:click="clickHandler('all')">all</a></span>
                 </span>
 
                 <span class="navbar-text mr-2">
-                    <span class="badge badge-info">in progress</span>
+                    <span class="badge badge-success"><a href="#" v-on:click="clickHandler('succeeded')">succeeded</a></span>
                 </span>
 
                 <span class="navbar-text mr-2">
-                    <span class="badge badge-danger">failed</span>
+                    <span class="badge badge-info"><a href="#" v-on:click="clickHandler('in progress')">in progress</span>
+                </span>
+
+                <span class="navbar-text mr-2">
+                    <span class="badge badge-danger"><a href="#" v-on:click="clickHandler('failed')">failed</a></span>
                 </span>
             </nav>
   `,
   mounted() {
     // Update the title of the dashboard in the nav bar, from the text of the "title" element.
     $('.navbar-brand').text($('title').text());
+  },
+  methods: {
+    clickHandler: function(status) {
+      router.push({path: router.history.current.path, query: { status: status }});
+    }
   }
 });
 
@@ -332,13 +340,13 @@ router.afterEach((to, from) => {
   let refreshFunc = window.location.reload;
   let refreshArgs = null;
 
-  if (to.path === '/') {
-    fetchAllPipelines(to.query);
-    refreshFunc = fetchAllPipelines;
-  } else if (to.path.match('^/card/')) {
+  if (to.path.match('^/card/')) {
     fetchCardPipeline(to.params.pipelineName);
     refreshFunc = fetchCardPipeline;
     refreshArgs = to.params.pipelineName;
+  } else {
+	fetchAllPipelines(to);
+    refreshFunc = fetchAllPipelines;
   }
 
   if (refreshInterval) {
@@ -362,7 +370,7 @@ function fetchAllPipelines(param = {}) {
       app.error = {
         status: 404,
         message: "Not found",
-        path: param,
+        path: param.path,
         enable: true,
       }
       return;
@@ -375,7 +383,7 @@ function fetchAllPipelines(param = {}) {
 
     for (let i = 0; i < names.length; i++) {
       // Fetch each pipeline.
-      pipelineService.getPipelineDetails(names[i], param).done((pipeline) => {
+      pipelineService.getPipelineDetails(names[i], param.query).done((pipeline) => {
         // We've got something to display, so stop the loading indicator. Doesn't matter if this is set to false many times.
         app.loading = false;
 

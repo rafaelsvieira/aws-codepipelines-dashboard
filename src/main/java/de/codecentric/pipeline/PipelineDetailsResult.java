@@ -1,19 +1,22 @@
 package de.codecentric.pipeline;
 
-import com.amazonaws.services.codepipeline.model.StageState;
-import lombok.Getter;
-
 import java.util.List;
+
+import com.amazonaws.services.codepipeline.model.StageState;
+
+import lombok.Getter;
 
 @Getter
 public class PipelineDetailsResult {
 
-    private final List<StageState> stageStates;
-    private final String commitMessage;
+	private final List<StageState> stageStates;
+	private final String commitMessage;
+	private final String pipelineName;
 
-    PipelineDetailsResult(List<StageState> stageStates, String commitMessage) {
-        this.stageStates = stageStates;
-        this.commitMessage = commitMessage;
-    }
+	PipelineDetailsResult(String pipelineName, List<StageState> stageStates, String commitMessage) {
+		this.stageStates = stageStates;
+		this.commitMessage = commitMessage;
+		this.pipelineName = pipelineName;
+	}
 
 }

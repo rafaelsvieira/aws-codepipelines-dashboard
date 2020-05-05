@@ -32,10 +32,10 @@ public class PipelineService {
 		try {
 			GetPipelineStateResult result = awsCodePipelineFacade.getPipelineStatus(pipelineName, pipelineStatus);
 			if (result == null) {
-				throw new PipelineServiceException("Failed to get details for " + pipelineName + " with status " + pipelineStatus, null);
+				return new PipelineDetailsResult(pipelineName, null, null);
 			}
 			String commitMessage = awsCodePipelineFacade.getLatestCommitMessage(pipelineName);
-			PipelineDetailsResult pipelineDetailsResult = new PipelineDetailsResult(result.getStageStates(), commitMessage);
+			PipelineDetailsResult pipelineDetailsResult = new PipelineDetailsResult(pipelineName, result.getStageStates(), commitMessage);
 			latestResult.put(pipelineName, pipelineDetailsResult);
 			return pipelineDetailsResult;
 		} catch (AWSCodePipelineException e) {
@@ -44,7 +44,7 @@ public class PipelineService {
 				//log.warn("{} - Returning cached value for {}", e.getMessage(), pipelineName);
 				return latestResult.get(pipelineName);
 			}
-			throw new PipelineServiceException("Failed to get details for " + pipelineName, e);
+			throw new PipelineServiceException(pipelineName, "Failed to get details for " + pipelineName, e);
 		}
 	}
 

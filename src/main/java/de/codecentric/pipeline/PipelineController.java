@@ -22,10 +22,8 @@ public class PipelineController {
 		this.pipelineService = pipelineService;
 	}
 
-	@RequestMapping(value = {"/pipelines"})
-	public List<PipelineSummary> handleIndex(
-			@RequestParam("group") Optional<String> group
-			) {
+	@RequestMapping(value = {"/pipelines", "/pipelines/{group}"})
+	public List<PipelineSummary> handleIndex(@PathVariable("group") Optional<String> group) {
 		String pipelineGroup = group.isPresent() ? group.get() : "";
 
 		return pipelineService.getPipelines(pipelineGroup);
