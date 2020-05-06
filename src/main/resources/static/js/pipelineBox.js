@@ -387,10 +387,16 @@ function fetchAllPipelines(param = {}) {
         // We've got something to display, so stop the loading indicator. Doesn't matter if this is set to false many times.
         app.loading = false;
 
+        const removePipeline = pipeline.lastStatusChange <= 0 && pipeline.commitMessage == null;
+
         // Find the index of the element in the array, that has this name.
         let pipelineIndex = pipelines.findIndex((item) => item.name === pipeline.name);
 
-        if (pipelineIndex >= 0) {
+        if (removePipeline) {
+            pipelines  = pipelines.filter(function(element) {
+                return element.name != pipeline.name;
+            })
+        } else if (pipelineIndex >= 0) {
           // If found, replace the found item with the newly returned pipeline details.
           pipelines[pipelineIndex] = pipeline
         } else {
