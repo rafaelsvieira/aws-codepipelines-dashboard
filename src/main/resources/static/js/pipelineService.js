@@ -49,6 +49,10 @@ let PipelineService = function (jquery, as) {
                 states: []
             };
 
+            if (response.stageStates === null) {
+                return pipelineDetails;
+            }
+
             for (let i = 0; i < response.stageStates.length; i++) {
                 const stageState = response.stageStates[i];
                 let stages = [];
